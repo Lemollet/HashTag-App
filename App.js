@@ -11,6 +11,7 @@ import {
   TouchableHighlight,
   ScrollView,
   Clipboard,
+  ImageBackground,
 } from 'react-native';
 
 export class App extends Component {
@@ -83,7 +84,7 @@ export class App extends Component {
   renderKeywordBoxes() {
     data = this.state.dataValue[this.state.pickerId].hashtag;
     if(this.state.pickerSelection === 'Select Category') {
-      return <Text> Please Select a category </Text>
+      return <Text style={{color: 'white'}}> Please Select a category </Text>
     } else {
       return data.map((e, i) => {
         return (
@@ -95,7 +96,7 @@ export class App extends Component {
               {
                 backgroundColor: this.state.selectedId.includes(i)
                   ? 'rgba(176, 224, 230, 0.6)'
-                  : styles.keywordBox
+                  : 'transparent'
               },
             ]}
             key={i}
@@ -103,7 +104,7 @@ export class App extends Component {
             <Text
               style={[
                 styles.keywordText,
-                { color: this.state.selectedId.includes(i) ? 'black' : 'black' },]}>
+                { color: this.state.selectedId.includes(i) ? '#000000' : '#FFFFFF' },]}>
               {e} </Text>
           </TouchableHighlight>
         );
@@ -113,26 +114,23 @@ export class App extends Component {
 
   render() {
     return (
-      <LinearGradient colors={['#8AB5E8', '#C074B2', '#4c4c4c']} style={styles.linearGradient}>
+      <LinearGradient colors={['#181a33', '#131529']} style={styles.linearGradient}>
         <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
-          <Text style={{ fontFamily: 'Gill Sans', fontSize: 30 }}> Hashtags </Text>
+          <Text style={{ fontFamily: 'Gill Sans', fontSize: 40, color: 'white' }}> Hashtags </Text>
         </View>
-        <View
-          style={{
-            height: 50,
-            //backgroundColor: 'red',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingLeft: 10
-          }}>
-          <Button
-            onPress={() => this.tooglePicker()}
-            title={this.state.pickerSelection}
-          >
-            {' '}
-          </Button>
-        </View>
+          <View
+            style={{
+              height: 70,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingLeft: 20
+            }}>
+            <Button
+              buttonStyle={ {backgroundColor: 'orange', borderRadius:10}}
+              onPress={() => this.tooglePicker()}
+              title={this.state.pickerSelection}></Button>
+          </View>
         <View style={{ flex: 3 }}>
           <ScrollView
             horizontal={false}
@@ -152,6 +150,7 @@ export class App extends Component {
               color: 'white'
             }}
             title={'Copy your Hashtags'}
+            buttonStyle={ {backgroundColor: 'orange', borderRadius:10}}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
@@ -164,6 +163,7 @@ export class App extends Component {
               type: 'material',
               color: 'white'
             }}
+            buttonStyle={ {backgroundColor: 'orange', borderRadius:10}}
             title={'Clear'}
             style={{
               justifyContent: 'center',
@@ -172,36 +172,34 @@ export class App extends Component {
             }}
             onPress={() => this.deleteHashtags()} />
         </View>
-        <Modal
-          visible={this.state.pickerDisplayed}
-          animationType={'slide'}
-          transparent={true}>
-          <View style={styles.modalitem}>
-            <Picker
-              style={styles.pickerStyle}
-              selectedValue={this.state.pickerSelection}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({
-                  pickerSelection: itemValue,
-                  pickerId: itemIndex,
-                })
-              }>
-              {this.state.pickerValue.map((e, i) => {
-                /* this.setState({dataValue: data[i].hashtag}) */
-                return <Picker.Item key={i} label={e} value={e} />;
-              })}
-            </Picker>
-            <Button
-              onPress={() => this.tooglePicker()}
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                margin: 20,
-              }}
-              title={'Done'} />
-
-          </View>
-        </Modal>
+          <Modal
+            visible={this.state.pickerDisplayed}
+            animationType={'slide'}
+            transparent={true}>
+            <View style={styles.modalitem}>
+                <Picker
+                  style={styles.pickerStyle}
+                  selectedValue={this.state.pickerSelection}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({
+                      pickerSelection: itemValue,
+                      pickerId: itemIndex,
+                    })
+                  }>
+                  {this.state.pickerValue.map((e, i) => {
+                    return <Picker.Item key={i} label={e} value={e} />;
+                  })}
+                </Picker>
+                <Button
+                  onPress={() => this.tooglePicker()}
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    margin: 20,
+                  }}
+                  title={'Done'} />
+            </View>
+          </Modal>
       </LinearGradient>
     );
   }
@@ -213,7 +211,7 @@ const styles = StyleSheet.create({
   },
   modalitem: {
     position: 'absolute',
-    backgroundColor: '#C074B2',
+    backgroundColor: '#3a3a51',
     bottom: 0,
     left: 0,
     right: 0,
@@ -224,7 +222,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     marginBottom: 50,
-    backgroundColor: '#C074B2',
+    backgroundColor: '#3a3a51',
   },
   container: {
     flex: 1,
