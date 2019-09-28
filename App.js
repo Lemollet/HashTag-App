@@ -82,29 +82,33 @@ export class App extends Component {
 
   renderKeywordBoxes() {
     data = this.state.dataValue[this.state.pickerId].hashtag;
-    return data.map((e, i) => {
-      return (
-        <TouchableHighlight
-          id='boton'
-          onPress={() => this._onPress(e, i)}
-          style={[
-            styles.keywordBox,
-            {
-              backgroundColor: this.state.selectedId.includes(i)
-                ? 'rgba(176, 224, 230, 0.6)'
-                : styles.keywordBox
-            },
-          ]}
-          key={i}
-          underlayColor={'rgba(176, 224, 230, 0.6)'}>
-          <Text
+    if(this.state.pickerSelection === 'Select Category') {
+      return <Text> Please Select a category </Text>
+    } else {
+      return data.map((e, i) => {
+        return (
+          <TouchableHighlight
+            id='boton'
+            onPress={() => this._onPress(e, i)}
             style={[
-              styles.keywordText,
-              { color: this.state.selectedId.includes(i) ? 'black' : 'black' },]}>
-            {e} </Text>
-        </TouchableHighlight>
-      );
-    });
+              styles.keywordBox,
+              {
+                backgroundColor: this.state.selectedId.includes(i)
+                  ? 'rgba(176, 224, 230, 0.6)'
+                  : styles.keywordBox
+              },
+            ]}
+            key={i}
+            underlayColor={'rgba(176, 224, 230, 0.6)'}>
+            <Text
+              style={[
+                styles.keywordText,
+                { color: this.state.selectedId.includes(i) ? 'black' : 'black' },]}>
+              {e} </Text>
+          </TouchableHighlight>
+        );
+      });
+    }
   }
 
   render() {
@@ -151,7 +155,7 @@ export class App extends Component {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              margin: 20,
+              marginBottom: 20,
             }}
             onPress={() => this.funCopy()} />
           <Button
@@ -164,7 +168,7 @@ export class App extends Component {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              margin: 10,
+              //margin: 10,
             }}
             onPress={() => this.deleteHashtags()} />
         </View>
