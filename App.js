@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
-import { Button } from 'react-native-elements';
+import {Button, Header, Icon} from 'react-native-elements';
 import {
   Text,
   View,
@@ -18,12 +18,12 @@ export class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pickerSelection: 'Select Category',   //LABEL
+      pickerSelection: 'Select Category', //LABEL
       pickerId: 0,
-      pickerDisplayed: false,               //IF PARA MOSTRAR PICKER
-      pickerValue: [],                      //ARREGLO CREADO
-      dataValue: [{ hashtag: ['cargando'] }], // #s
-      textToCopy: '',                       //String
+      pickerDisplayed: false, //IF PARA MOSTRAR PICKER
+      pickerValue: [], //ARREGLO CREADO
+      dataValue: [{hashtag: ['cargando']}], // #s
+      textToCopy: '', //String
       selectedId: [],
     };
   }
@@ -32,15 +32,16 @@ export class App extends Component {
     const headers = {
       'X-Parse-Application-Id': 'aVcbcdaMSITLDSmqDLKCrRr3sFRefjUpPW8p8qmJ',
     };
-    axios.get('http://68.183.153.133:1919/parse/classes/IgSocial/', { headers })
+    axios
+      .get('http://68.183.153.133:1919/parse/classes/IgSocial/', {headers})
       .then(res => {
         //console.log(res.data.results);
         let arraytests = [];
         res.data.results.map(e => {
           arraytests.push(e.category);
         });
-        this.setState({ dataValue: res.data.results });
-        this.setState({ pickerValue: arraytests });
+        this.setState({dataValue: res.data.results});
+        this.setState({pickerValue: arraytests});
         //console.log(this.state.pickerValue);
         //console.log(this.state.dataValue);
       })
@@ -50,53 +51,64 @@ export class App extends Component {
   }
 
   deleteHashtags() {
-    this.setState({ textToCopy: '' });
+    this.setState({textToCopy: '', selectedId: []});
   }
 
   _onPress = (item, index) => {
     //console.log(index + ' ' + item);
     let prueba = this.state.textToCopy;
-    if (this.state.selectedId.includes(index)) { // ELIMINA
+    if (this.state.selectedId.includes(index)) {
+      // ELIMINA
       console.log('Ya existe');
       console.log(index);
-      this.state.selectedId = this.state.selectedId.filter(item => item !== index);
+      this.state.selectedId = this.state.selectedId.filter(
+        item => item !== index,
+      );
       prueba = this.state.textToCopy.replace(' ' + item, '');
-      //document.getElementById('boton').style.backgroundColor = 'rgba(176, 224, 230, 0.6)';
     } else {
-      this.state.selectedId.push(index);      //Se agrega
+      this.state.selectedId.push(index); //Se agrega
       prueba = this.state.textToCopy + ' ' + item;
     }
     //console.log(this.state.selectedId)
-    this.setState({ textToCopy: prueba });
+    this.setState({textToCopy: prueba});
   };
 
   funCopy() {
-    Clipboard.setString(this.state.textToCopy);
-    alert('¡Awesome! \n Your hashtags have been copied');
+    if (this.state.textToCopy == '') {
+      alert(' No items to copy ')
+    } else {
+      Clipboard.setString(this.state.textToCopy);
+      alert('¡Awesome! \n Your hashtags have been copied');
+    }
   }
 
   tooglePicker() {
     this.setState({
       pickerDisplayed: !this.state.pickerDisplayed,
+      selectedId: []  
+
     });
   }
-
+  
   renderKeywordBoxes() {
     data = this.state.dataValue[this.state.pickerId].hashtag;
-    if(this.state.pickerSelection === 'Select Category') {
-      return <Text style={{color: 'white'}}> Please Select a category </Text>
+    if (this.state.pickerSelection === 'Select Category') {
+      return <Text style={{color: 'white',}}> Please Select a category </Text>;
     } else {
-      return data.map((e, i) => {
-        return (
+      if (this.state.pickerDisplayed == true) {
+        return  
+      } else {
+        return data.map((e, i) => {
+          return (
           <TouchableHighlight
-            id='boton'
+            id="boton"
             onPress={() => this._onPress(e, i)}
             style={[
               styles.keywordBox,
               {
                 backgroundColor: this.state.selectedId.includes(i)
                   ? 'rgba(176, 224, 230, 0.6)'
-                  : 'transparent'
+                  : 'transparent',
               },
             ]}
             key={i}
@@ -104,34 +116,41 @@ export class App extends Component {
             <Text
               style={[
                 styles.keywordText,
-                { color: this.state.selectedId.includes(i) ? '#000000' : '#FFFFFF' },]}>
-              {e} </Text>
+                {
+                  color: this.state.selectedId.includes(i)
+                    ? '#000000'
+                    : '#FFFFFF',
+                },
+              ]}>
+              {e}
+            </Text>
           </TouchableHighlight>
         );
       });
+    }
     }
   }
 
   render() {
     return (
-      <LinearGradient colors={['#181a33', '#131529']} style={styles.linearGradient}>
-        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
-          <Text style={{ fontFamily: 'Gill Sans', fontSize: 40, color: 'white' }}> Hashtags </Text>
-        </View>
-          <View
-            style={{
-              height: 70,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingLeft: 20
-            }}>
-            <Button
-              buttonStyle={ {backgroundColor: 'orange', borderRadius:10}}
-              onPress={() => this.tooglePicker()}
-              title={this.state.pickerSelection}></Button>
-          </View>
-        <View style={{ flex: 3 }}>
+      <LinearGradient
+        colors={['#181a33', '#131529']}
+        style={styles.linearGradient}>
+        <Header
+          ViewComponent={LinearGradient} // Don't forget this!
+          linearGradientProps={{
+            colors: ['#181a33', '#131529']}}
+          leftComponent={
+            <Icon
+            //buttonStyle={{backgroundColor: 'orange', borderRadius: 10, height:40, width: 50}}
+            //title={this.state.pickerSelection}
+            type= 'font-awesome'
+            name='hashtag'
+            color= 'white'
+            onPress={() => this.tooglePicker()}/>}
+          centerComponent={{text: '# App', style: {color: '#fff', fontSize: 25 }}}
+          rightComponent={{icon: 'plus', color: '#fff', type: 'font-awesome' } }/>
+        <View style={{flex: 3}}>
           <ScrollView
             horizontal={false}
             style={styles.footerWrapperNC}
@@ -139,67 +158,80 @@ export class App extends Component {
             {this.renderKeywordBoxes()}
           </ScrollView>
         </View>
-        <View style={{ flex: 1, /* backgroundColor: 'blue' */ }}>
+        <View style={{flex: 1 /* backgroundColor: 'blue' */}}>
           <Text style={styles.keywordText}>{this.state.textToCopy}</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <Button
             icon={{
               name: 'copy',
               type: 'feather',
-              color: 'white'
+              color: 'white',
             }}
             title={'Copy your Hashtags'}
-            buttonStyle={ {backgroundColor: 'orange', borderRadius:10}}
+            buttonStyle={{backgroundColor: 'orange', borderRadius: 10}}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
               marginBottom: 20,
             }}
-            onPress={() => this.funCopy()} />
+            onPress={() => this.funCopy()}
+          />
           <Button
             icon={{
               name: 'format-clear',
               type: 'material',
-              color: 'white'
+              color: 'white',
             }}
-            buttonStyle={ {backgroundColor: 'orange', borderRadius:10}}
+            buttonStyle={{backgroundColor: 'orange', borderRadius: 10}}
             title={'Clear'}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              //margin: 10,
             }}
-            onPress={() => this.deleteHashtags()} />
+            onPress={() => this.deleteHashtags()}
+          />
         </View>
-          <Modal
-            visible={this.state.pickerDisplayed}
-            animationType={'slide'}
-            transparent={true}>
-            <View style={styles.modalitem}>
-                <Picker
-                  style={styles.pickerStyle}
-                  selectedValue={this.state.pickerSelection}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({
-                      pickerSelection: itemValue,
-                      pickerId: itemIndex,
-                    })
-                  }>
-                  {this.state.pickerValue.map((e, i) => {
-                    return <Picker.Item key={i} label={e} value={e} />;
-                  })}
-                </Picker>
-                <Button
-                  onPress={() => this.tooglePicker()}
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    margin: 20,
-                  }}
-                  title={'Done'} />
+        <Modal
+          style={{backgroundColor: 'red'}}
+          visible={this.state.pickerDisplayed}
+          animationType={'slide'}
+          transparent={true}>
+          <View style={styles.modalitem}>
+            <TouchableHighlight
+              onPress={() => this.setState({pickerDisplayed: false})}
+              style={{flex: 1, backgroundColor: 'transparent'}}>
+              <View />
+            </TouchableHighlight>
+
+            <Picker
+              style={{backgroundColor: '#3a3a51'}}
+              selectedValue={this.state.pickerSelection}
+              onValueChange={(itemValue, itemIndex) =>
+                this.setState({
+                  pickerSelection: itemValue,
+                  pickerId: itemIndex,
+                })
+              }>
+              {this.state.pickerValue.map((e, i) => {
+                return <Picker.Item key={i} label={e} value={e} />;
+              })}
+            </Picker>
+            <View
+              style={{backgroundColor: '#3a3a51', width: '100%', height: 80}}>
+              <Button
+                onPress={() => this.tooglePicker()}
+                //onPress={() => () => this.deleteHashtags()}
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  margin: 20,
+                }}
+                title={'Done'}
+              />
             </View>
-          </Modal>
+          </View>
+        </Modal>
       </LinearGradient>
     );
   }
@@ -210,11 +242,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalitem: {
-    position: 'absolute',
-    backgroundColor: '#3a3a51',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    //backgroundColor: '#3a3a51',
+    flex: 1,
+    justifyContent: 'space-around',
   },
   pickerStyle: {
     position: 'absolute',
