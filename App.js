@@ -75,7 +75,7 @@ export class App extends Component {
 
   funCopy() {
     if (this.state.textToCopy == '') {
-      alert(' No items to copy ')
+      alert(' No items to copy ');
     } else {
       Clipboard.setString(this.state.textToCopy);
       alert('¡Awesome! \n Your hashtags have been copied');
@@ -85,49 +85,48 @@ export class App extends Component {
   tooglePicker() {
     this.setState({
       pickerDisplayed: !this.state.pickerDisplayed,
-      selectedId: []  
-
+      selectedId: [],
     });
   }
-  
+
   renderKeywordBoxes() {
     data = this.state.dataValue[this.state.pickerId].hashtag;
     if (this.state.pickerSelection === 'Select Category') {
-      return <Text style={{color: 'white',}}> Please Select a category </Text>;
+      return <Text style={{color: 'white'}}> Please Select a category </Text>;
     } else {
       if (this.state.pickerDisplayed == true) {
-        return  
+        return;
       } else {
         return data.map((e, i) => {
           return (
-          <TouchableHighlight
-            id="boton"
-            onPress={() => this._onPress(e, i)}
-            style={[
-              styles.keywordBox,
-              {
-                backgroundColor: this.state.selectedId.includes(i)
-                  ? 'rgba(176, 224, 230, 0.6)'
-                  : 'transparent',
-              },
-            ]}
-            key={i}
-            underlayColor={'rgba(176, 224, 230, 0.6)'}>
-            <Text
+            <TouchableHighlight
+              id="boton"
+              onPress={() => this._onPress(e, i)}
               style={[
-                styles.keywordText,
+                styles.keywordBox,
                 {
-                  color: this.state.selectedId.includes(i)
-                    ? '#000000'
-                    : '#FFFFFF',
+                  backgroundColor: this.state.selectedId.includes(i)
+                    ? 'rgba(176, 224, 230, 0.6)'
+                    : 'transparent',
                 },
-              ]}>
-              {e}
-            </Text>
-          </TouchableHighlight>
-        );
-      });
-    }
+              ]}
+              key={i}
+              underlayColor={'rgba(176, 224, 230, 0.6)'}>
+              <Text
+                style={[
+                  styles.keywordText,
+                  {
+                    color: this.state.selectedId.includes(i)
+                      ? '#000000'
+                      : '#FFFFFF',
+                  },
+                ]}>
+                {e}
+              </Text>
+            </TouchableHighlight>
+          );
+        });
+      }
     }
   }
 
@@ -139,17 +138,24 @@ export class App extends Component {
         <Header
           ViewComponent={LinearGradient} // Don't forget this!
           linearGradientProps={{
-            colors: ['#181a33', '#131529']}}
+            colors: ['#181a33', '#131529'],
+          }}
           leftComponent={
             <Icon
-            //buttonStyle={{backgroundColor: 'orange', borderRadius: 10, height:40, width: 50}}
-            //title={this.state.pickerSelection}
-            type= 'font-awesome'
-            name='hashtag'
-            color= 'white'
-            onPress={() => this.tooglePicker()}/>}
-          centerComponent={{text: '# App', style: {color: '#fff', fontSize: 25 }}}
-          rightComponent={{icon: 'plus', color: '#fff', type: 'font-awesome' } }/>
+              //buttonStyle={{backgroundColor: 'orange', borderRadius: 10, height:40, width: 50}}
+              //title={this.state.pickerSelection}
+              type="font-awesome"
+              name="hashtag"
+              color="white"
+              onPress={() => this.tooglePicker()}
+            />
+          }
+          centerComponent={{
+            text: '# App',
+            style: {color: '#fff', fontSize: 25},
+          }}
+          rightComponent={{icon: 'plus', color: '#fff', type: 'font-awesome'}}
+        />
         <View style={{flex: 3}}>
           <ScrollView
             horizontal={false}
