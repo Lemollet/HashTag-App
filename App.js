@@ -1,17 +1,15 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
-import {Button, Header, Icon, Badge } from 'react-native-elements';
+import {Button, Header, Icon, Badge} from 'react-native-elements';
 import {
   Text,
   View,
-  Picker,
-  Modal,
   StyleSheet,
   TouchableHighlight,
   ScrollView,
   Clipboard,
-  ActionSheetIOS
+  ActionSheetIOS,
 } from 'react-native';
 
 export class App extends Component {
@@ -54,9 +52,10 @@ export class App extends Component {
 
   deleteHashtags() {
     this.setState({
-      textToCopy: '', 
+      textToCopy: '',
       selectedId: [],
-      contadorPrueba: 0});
+      contadorPrueba: 0,
+    });
   }
 
   actionSheet() {
@@ -70,14 +69,13 @@ export class App extends Component {
           alert('Acción cancelada');
         } else {
           this.setState({pickerId: buttonIndex});
-          console.log(this.state.pickerId);
           this.renderKeywordBoxes();
           this.setState({pickerSelection: this.state.pickerValue[buttonIndex]});
-          console.log(this.state.pickerValue);
           this.setState({
             selectedId: [],
             textToCopy: '',
-            contadorPrueba: 0});
+            contadorPrueba: 0,
+          });
         }
       },
     );
@@ -88,36 +86,36 @@ export class App extends Component {
     if (this.state.pickerId === null) {
       return <Text style={{color: 'white'}}> Please Select a category </Text>;
     } else {
-    return dataDePrueba.map((e, i) => {
-      return(
-        <TouchableHighlight
-              onPress={() => this._onPress(e, i)}
+      return dataDePrueba.map((e, i) => {
+        return (
+          <TouchableHighlight
+            onPress={() => this._onPress(e, i)}
+            style={[
+              styles.keywordBox,
+              {
+                backgroundColor: this.state.selectedId.includes(i)
+                  ? 'rgba(176, 224, 230, 0.6)'
+                  : 'transparent',
+              },
+            ]}
+            key={i}
+            underlayColor={'rgba(176, 224, 230, 0.6)'}>
+            <Text
               style={[
-                styles.keywordBox,
+                styles.keywordText,
                 {
-                  backgroundColor: this.state.selectedId.includes(i)
-                    ? 'rgba(176, 224, 230, 0.6)'
-                    : 'transparent',
+                  color: this.state.selectedId.includes(i)
+                    ? '#000000'
+                    : '#FFFFFF',
                 },
-              ]}
-              key={i}
-              underlayColor={'rgba(176, 224, 230, 0.6)'}>
-              <Text
-                style={[
-                  styles.keywordText,
-                  {
-                    color: this.state.selectedId.includes(i)
-                      ? '#000000'
-                      : '#FFFFFF',
-                  },
-                ]}>
-                {e}
-              </Text>
-        </TouchableHighlight>
-      )
-    })
+              ]}>
+              {e}
+            </Text>
+          </TouchableHighlight>
+        );
+      });
+    }
   }
-}
 
   _onPress = (item, index) => {
     let prueba = this.state.textToCopy;
@@ -135,7 +133,7 @@ export class App extends Component {
     }
     //console.log(this.state.selectedId)
     this.setState({textToCopy: prueba});
-    this.setState({contadorPrueba: this.state.selectedId.length})
+    this.setState({contadorPrueba: this.state.selectedId.length});
   };
 
   funCopy() {
@@ -147,45 +145,49 @@ export class App extends Component {
     }
   }
 
-  tooglePicker() {
-    this.setState({
-      pickerDisplayed: !this.state.pickerDisplayed,
-      selectedId: [],
-    });
-  }
-
-  cambio(){
-    if(this.state.contadorPrueba <= 24){
-      return "success"
-    } else if (this.state.contadorPrueba <= 30 && this.state.contadorPrueba > 24){
-      return "warning"
-    }else {
-      return "error"
+  colorBadge() {
+    if (this.state.contadorPrueba <= 24) {
+      return 'success';
+    } else if (
+      this.state.contadorPrueba <= 30 &&
+      this.state.contadorPrueba > 24
+    ) {
+      return 'warning';
+    } else {
+      return 'error';
     }
   }
+
   render() {
     return (
       <LinearGradient
         colors={['#181a33', '#131529']}
         style={styles.linearGradient}>
         <Header
-          placement = 'left'
-          ViewComponent={LinearGradient} // Don't forget this!
+          placement="left"
+          ViewComponent={LinearGradient}
           linearGradientProps={{
             colors: ['#181a33', '#131529'],
           }}
           leftComponent={
             <Icon
-              //buttonStyle={{backgroundColor: 'orange', borderRadius: 10, height:40, width: 50}}
-              //title={this.state.pickerSelection}
               type="font-awesome"
               name="hashtag"
               color="white"
               onPress={() => this.actionSheet()}
             />
           }
-          centerComponent={{ text: this.state.pickerSelection, style: { color: '#ffff' } }}
-          rightComponent={ <Badge value={this.state.contadorPrueba} status={this.cambio()}/> } />
+          centerComponent={{
+            text: this.state.pickerSelection,
+            style: {color: '#ffff'},
+          }}
+          rightComponent={
+            <Badge
+              value={this.state.contadorPrueba}
+              status={this.colorBadge()}
+            />
+          }
+        />
         <View style={{flex: 3}}>
           <ScrollView
             horizontal={false}
@@ -228,46 +230,6 @@ export class App extends Component {
             onPress={() => this.deleteHashtags()}
           />
         </View>
-        <Modal
-          style={{backgroundColor: 'red'}}
-          visible={this.state.pickerDisplayed}
-          animationType={'slide'}
-          transparent={true}>
-          <View style={styles.modalitem}>
-            <TouchableHighlight
-              onPress={() => this.setState({pickerDisplayed: false})}
-              style={{flex: 1, backgroundColor: 'transparent'}}>
-              <View />
-            </TouchableHighlight>
-
-            <Picker
-              style={{backgroundColor: '#3a3a51'}}
-              selectedValue={this.state.pickerSelection}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({
-                  pickerSelection: itemValue,
-                  //pickerId: itemIndex,
-                })
-              }>
-              {this.state.pickerValue.map((e, i) => {
-                return <Picker.Item key={i} label={e} value={e} />;
-              })}
-            </Picker>
-            <View
-              style={{backgroundColor: '#3a3a51', width: '100%', height: 80}}>
-              <Button
-                onPress={() => this.tooglePicker()}
-                //onPress={() => () => this.deleteHashtags()}
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  margin: 20,
-                }}
-                title={'Done'}
-              />
-            </View>
-          </View>
-        </Modal>
       </LinearGradient>
     );
   }
@@ -276,24 +238,6 @@ export class App extends Component {
 const styles = StyleSheet.create({
   linearGradient: {
     flex: 1,
-  },
-  modalitem: {
-    //backgroundColor: '#3a3a51',
-    flex: 1,
-    justifyContent: 'space-around',
-  },
-  pickerStyle: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    marginBottom: 50,
-    backgroundColor: '#3a3a51',
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   keywordText: {
     fontFamily: 'Bebas Neue',
