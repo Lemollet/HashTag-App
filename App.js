@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
-import {Button, Header, Icon} from 'react-native-elements';
+import {Button, Header, Icon, Badge } from 'react-native-elements';
 import {
   Text,
   View,
@@ -11,7 +11,7 @@ import {
   TouchableHighlight,
   ScrollView,
   Clipboard,
-  ImageBackground,
+  ActionSheetIOS
 } from 'react-native';
 
 export class App extends Component {
@@ -25,6 +25,7 @@ export class App extends Component {
       dataValue: [{hashtag: ['cargando']}], // #s
       textToCopy: '', //String
       selectedId: [],
+      contadorPrueba: 0,
     };
   }
 
@@ -40,6 +41,7 @@ export class App extends Component {
         res.data.results.map(e => {
           arraytests.push(e.category);
         });
+        arraytests.push('Cancel');
         this.setState({dataValue: res.data.results});
         this.setState({pickerValue: arraytests});
         //console.log(this.state.pickerValue);
@@ -51,56 +53,39 @@ export class App extends Component {
   }
 
   deleteHashtags() {
-    this.setState({textToCopy: '', selectedId: []});
-  }
-
-  _onPress = (item, index) => {
-    //console.log(index + ' ' + item);
-    let prueba = this.state.textToCopy;
-    if (this.state.selectedId.includes(index)) {
-      // ELIMINA
-      console.log('Ya existe');
-      console.log(index);
-      this.state.selectedId = this.state.selectedId.filter(
-        item => item !== index,
-      );
-      prueba = this.state.textToCopy.replace(' ' + item, '');
-    } else {
-      this.state.selectedId.push(index); //Se agrega
-      prueba = this.state.textToCopy + ' ' + item;
-    }
-    //console.log(this.state.selectedId)
-    this.setState({textToCopy: prueba});
-  };
-
-  funCopy() {
-    if (this.state.textToCopy == '') {
-      alert(' No items to copy ');
-    } else {
-      Clipboard.setString(this.state.textToCopy);
-      alert('¡Awesome! \n Your hashtags have been copied');
-    }
-  }
-
-  tooglePicker() {
     this.setState({
-      pickerDisplayed: !this.state.pickerDisplayed,
+      textToCopy: '', 
       selectedId: [],
-    });
+      contadorPrueba: 0});
+  }
+
+  actionSheet() {
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: this.state.pickerValue,
+        cancelButtonIndex: this.state.pickerValue.length - 1,
+      },
+      buttonIndex => {
+        if (buttonIndex === this.state.pickerValue.length - 1) {
+          alert('Acción cancelada');
+          this.setState({selectedId: []})
+        } else {
+          this.setState({pickerId: buttonIndex});
+          console.log(this.state.pickerId);
+          this.renderKeywordBoxes();
+        }
+      },
+    );
   }
 
   renderKeywordBoxes() {
-    data = this.state.dataValue[this.state.pickerId].hashtag;
-    if (this.state.pickerSelection === 'Select Category') {
+    dataDePrueba = this.state.dataValue[this.state.pickerId].hashtag;
+    if (this.state.pickerId === null) {
       return <Text style={{color: 'white'}}> Please Select a category </Text>;
     } else {
-      if (this.state.pickerDisplayed == true) {
-        return;
-      } else {
-        return data.map((e, i) => {
-          return (
-            <TouchableHighlight
-              id="boton"
+    return dataDePrueba.map((e, i) => {
+      return(
+        <TouchableHighlight
               onPress={() => this._onPress(e, i)}
               style={[
                 styles.keywordBox,
@@ -123,11 +108,45 @@ export class App extends Component {
                 ]}>
                 {e}
               </Text>
-            </TouchableHighlight>
-          );
-        });
-      }
+        </TouchableHighlight>
+      )
+    })
+  }
+}
+
+  _onPress = (item, index) => {
+    let prueba = this.state.textToCopy;
+    if (this.state.selectedId.includes(index)) {
+      // ELIMINA
+      console.log('Ya existe');
+      console.log(index);
+      this.state.selectedId = this.state.selectedId.filter(
+        item => item !== index,
+      );
+      prueba = this.state.textToCopy.replace(' ' + item, '');
+    } else {
+      this.state.selectedId.push(index); //Se agrega
+      prueba = this.state.textToCopy + ' ' + item;
     }
+    //console.log(this.state.selectedId)
+    this.setState({textToCopy: prueba});
+    this.setState({contadorPrueba: this.state.selectedId.length})
+  };
+
+  funCopy() {
+    if (this.state.textToCopy == '') {
+      alert(' No items to copy ');
+    } else {
+      Clipboard.setString(this.state.textToCopy);
+      alert(` Awesome \n yo have ${this.state.contadorPrueba} hashtags copied`);
+    }
+  }
+
+  tooglePicker() {
+    this.setState({
+      pickerDisplayed: !this.state.pickerDisplayed,
+      selectedId: [],
+    });
   }
 
   render() {
@@ -136,6 +155,7 @@ export class App extends Component {
         colors={['#181a33', '#131529']}
         style={styles.linearGradient}>
         <Header
+          placement = 'left'
           ViewComponent={LinearGradient} // Don't forget this!
           linearGradientProps={{
             colors: ['#181a33', '#131529'],
@@ -147,15 +167,11 @@ export class App extends Component {
               type="font-awesome"
               name="hashtag"
               color="white"
-              onPress={() => this.tooglePicker()}
+              onPress={() => this.actionSheet()}
             />
           }
-          centerComponent={{
-            text: '# App',
-            style: {color: '#fff', fontSize: 25},
-          }}
-          rightComponent={{icon: 'plus', color: '#fff', type: 'font-awesome'}}
-        />
+          centerComponent={this.state.pickerSelection}
+          rightComponent={ <Badge value={this.state.contadorPrueba} status="error"/> } />
         <View style={{flex: 3}}>
           <ScrollView
             horizontal={false}
@@ -216,7 +232,7 @@ export class App extends Component {
               onValueChange={(itemValue, itemIndex) =>
                 this.setState({
                   pickerSelection: itemValue,
-                  pickerId: itemIndex,
+                  //pickerId: itemIndex,
                 })
               }>
               {this.state.pickerValue.map((e, i) => {
