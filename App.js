@@ -68,11 +68,16 @@ export class App extends Component {
       buttonIndex => {
         if (buttonIndex === this.state.pickerValue.length - 1) {
           alert('Acción cancelada');
-          this.setState({selectedId: []})
         } else {
           this.setState({pickerId: buttonIndex});
           console.log(this.state.pickerId);
           this.renderKeywordBoxes();
+          this.setState({pickerSelection: this.state.pickerValue[buttonIndex]});
+          console.log(this.state.pickerValue);
+          this.setState({
+            selectedId: [],
+            textToCopy: '',
+            contadorPrueba: 0});
         }
       },
     );
@@ -149,6 +154,15 @@ export class App extends Component {
     });
   }
 
+  cambio(){
+    if(this.state.contadorPrueba <= 24){
+      return "success"
+    } else if (this.state.contadorPrueba <= 30 && this.state.contadorPrueba > 24){
+      return "warning"
+    }else {
+      return "error"
+    }
+  }
   render() {
     return (
       <LinearGradient
@@ -170,8 +184,8 @@ export class App extends Component {
               onPress={() => this.actionSheet()}
             />
           }
-          centerComponent={this.state.pickerSelection}
-          rightComponent={ <Badge value={this.state.contadorPrueba} status="error"/> } />
+          centerComponent={{ text: this.state.pickerSelection, style: { color: '#ffff' } }}
+          rightComponent={ <Badge value={this.state.contadorPrueba} status={this.cambio()}/> } />
         <View style={{flex: 3}}>
           <ScrollView
             horizontal={false}
