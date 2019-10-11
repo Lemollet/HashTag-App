@@ -19,10 +19,10 @@ export class App extends Component {
       pickerSelection: 'Select Category', //LABEL
       pickerId: 0,
       pickerDisplayed: false, //IF PARA MOSTRAR PICKER
-      pickerValue: [], //ARREGLO CREADO
+      pickerValue: [], // Categories
       dataValue: [{hashtag: ['cargando']}], // #s
       textToCopy: '', //String
-      selectedId: [],
+      selectedId: [[]],
       contadorPrueba: 0,
     };
   }
@@ -36,12 +36,16 @@ export class App extends Component {
       .then(res => {
         //console.log(res.data.results);
         let arraytests = [];
+        let seletedIdArrays = [];
         res.data.results.map(e => {
           arraytests.push(e.category);
+          seletedIdArrays.push([]);
         });
+        arraytests.push('Add new category');
         arraytests.push('Cancel');
         this.setState({dataValue: res.data.results});
         this.setState({pickerValue: arraytests});
+        this.setState({selectedId: seletedIdArrays});
         //console.log(this.state.pickerValue);
         //console.log(this.state.dataValue);
       })
@@ -51,9 +55,13 @@ export class App extends Component {
   }
 
   deleteHashtags() {
+    justForDelet=[]
+    this.state.pickerValue.map(e => {
+      justForDelet.push([]);
+    })
     this.setState({
       textToCopy: '',
-      selectedId: [],
+      selectedId: justForDelet, //Esto debe estar bien.
       contadorPrueba: 0,
     });
   }
@@ -67,15 +75,13 @@ export class App extends Component {
       buttonIndex => {
         if (buttonIndex === this.state.pickerValue.length - 1) {
           alert('Acción cancelada');
+        } else if (buttonIndex === this.state.pickerValue.length - 2) {
+            alert("...");
+            //this.props.navigation.navigate('Hash')
         } else {
           this.setState({pickerId: buttonIndex});
           this.renderKeywordBoxes();
           this.setState({pickerSelection: this.state.pickerValue[buttonIndex]});
-          this.setState({
-            selectedId: [],
-            textToCopy: '',
-            contadorPrueba: 0,
-          });
         }
       },
     );
@@ -93,7 +99,7 @@ export class App extends Component {
             style={[
               styles.keywordBox,
               {
-                backgroundColor: this.state.selectedId.includes(i)
+                backgroundColor: this.state.selectedId[this.state.pickerId].includes(i)
                   ? 'rgba(176, 224, 230, 0.6)'
                   : 'transparent',
               },
@@ -104,7 +110,7 @@ export class App extends Component {
               style={[
                 styles.keywordText,
                 {
-                  color: this.state.selectedId.includes(i)
+                  color: this.state.selectedId[this.state.pickerId].includes(i)
                     ? '#000000'
                     : '#FFFFFF',
                 },
@@ -119,21 +125,21 @@ export class App extends Component {
 
   _onPress = (item, index) => {
     let prueba = this.state.textToCopy;
-    if (this.state.selectedId.includes(index)) {
-      // ELIMINA
+    if (this.state.selectedId[this.state.pickerId].includes(index)) {      // ELIMINA
       console.log('Ya existe');
       console.log(index);
-      this.state.selectedId = this.state.selectedId.filter(
-        item => item !== index,
-      );
+      this.state.selectedId[this.state.pickerId] = this.state.selectedId[this.state.pickerId].filter(
+        item => item !== index);
       prueba = this.state.textToCopy.replace(' ' + item, '');
     } else {
-      this.state.selectedId.push(index); //Se agrega
+      this.state.selectedId[this.state.pickerId].push(index); //Se agrega
       prueba = this.state.textToCopy + ' ' + item;
     }
     //console.log(this.state.selectedId)
     this.setState({textToCopy: prueba});
-    this.setState({contadorPrueba: this.state.selectedId.length});
+    this.setState({
+      contadorPrueba: this.state.selectedId[this.state.pickerId].length,
+    });
   };
 
   funCopy() {
@@ -148,10 +154,7 @@ export class App extends Component {
   colorBadge() {
     if (this.state.contadorPrueba <= 24) {
       return 'success';
-    } else if (
-      this.state.contadorPrueba <= 30 &&
-      this.state.contadorPrueba > 24
-    ) {
+    } else if (this.state.contadorPrueba <= 30 && this.state.contadorPrueba > 24) {
       return 'warning';
     } else {
       return 'error';
@@ -183,6 +186,7 @@ export class App extends Component {
           }}
           rightComponent={
             <Badge
+              badgeStyle={{margin: 10}}
               value={this.state.contadorPrueba}
               status={this.colorBadge()}
             />
@@ -200,6 +204,14 @@ export class App extends Component {
           <Text style={styles.keywordText}>{this.state.textToCopy}</Text>
         </View>
         <View style={{flex: 1}}>
+          <Button 
+            title={'Add your own hashtags'}
+            buttonStyle={{backgroundColor: 'orange', borderRadius: 10}}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 10, }}
+            onPress={() => this.props.navigation.navigate('Add')}/>
           <Button
             icon={{
               name: 'copy',
@@ -211,7 +223,7 @@ export class App extends Component {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              marginBottom: 20,
+              marginBottom: 10,
             }}
             onPress={() => this.funCopy()}
           />
