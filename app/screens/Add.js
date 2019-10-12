@@ -26,7 +26,7 @@ export default class App extends Component {
                 centerComponent={{ text: 'Add your hashtags', style: { color: '#fff' } }}
             />
             <View>
-                <Input placeholder='recomended: #hola, #mundo'/>
+                <Input placeholder='Recomended: #hola, #mundo'/>
             </View>
             <Button 
                 title={'Add'}

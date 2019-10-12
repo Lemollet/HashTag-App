@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
-import {Button, Header, Icon, Badge} from 'react-native-elements';
+import { Button, Header, Icon, Badge, Tooltip, Text } from 'react-native-elements';
 import {
-  Text,
   View,
   StyleSheet,
   TouchableHighlight,
@@ -46,7 +45,7 @@ export class App extends Component {
         this.setState({dataValue: res.data.results});
         this.setState({pickerValue: arraytests});
         this.setState({selectedId: seletedIdArrays});
-        //console.log(this.state.pickerValue);
+        console.log(this.state.pickerValue);
         //console.log(this.state.dataValue);
       })
       .catch(err => {
@@ -136,9 +135,18 @@ export class App extends Component {
       prueba = this.state.textToCopy + ' ' + item;
     }
     //console.log(this.state.selectedId)
+    let forAccountant = 0;
+    //const valorArreglo = this.state.pickerValue.length - 2;
+    /* for( let i=0; i <= 4; i++ ){
+        forAccountant += this.state.selectedId[i]   
+    } */
+    /* this.state.pickerValue.map(e => {
+        forAccountant += this.state.selectedId[this.state.pickerId].length
+    }) */
+
     this.setState({textToCopy: prueba});
     this.setState({
-      contadorPrueba: this.state.selectedId[this.state.pickerId].length,
+      contadorPrueba: this.state.selectedId[0].length + this.state.selectedId[1].length + this.state.selectedId[2].length
     });
   };
 
@@ -185,11 +193,15 @@ export class App extends Component {
             style: {color: '#ffff'},
           }}
           rightComponent={
-            <Badge
-              badgeStyle={{margin: 10}}
-              value={this.state.contadorPrueba}
-              status={this.colorBadge()}
-            />
+            <Tooltip
+              popover={
+                <Text>Instagram only supports 34 hashtags, be careful</Text>
+              }>
+              <Badge
+                badgeStyle={{margin: 10}}
+                value={this.state.contadorPrueba}
+                status={this.colorBadge()}/>
+            </Tooltip>
           }
         />
         <View style={{flex: 3}}>
@@ -204,14 +216,16 @@ export class App extends Component {
           <Text style={styles.keywordText}>{this.state.textToCopy}</Text>
         </View>
         <View style={{flex: 1}}>
-          <Button 
+          <Button
             title={'Add your own hashtags'}
             buttonStyle={{backgroundColor: 'orange', borderRadius: 10}}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              marginBottom: 10, }}
-            onPress={() => this.props.navigation.navigate('Add')}/>
+              marginBottom: 10,
+            }}
+            onPress={() => this.props.navigation.navigate('Add')}
+          />
           <Button
             icon={{
               name: 'copy',
