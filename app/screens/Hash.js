@@ -1,7 +1,14 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
-import { Button, Header, Icon, Badge, Tooltip, Text } from 'react-native-elements';
+import {
+  Button,
+  Header,
+  Icon,
+  Badge,
+  Tooltip,
+  Text,
+} from 'react-native-elements';
 import {
   View,
   StyleSheet,
@@ -10,6 +17,7 @@ import {
   Clipboard,
   ActionSheetIOS,
 } from 'react-native';
+
 
 export class App extends Component {
   constructor(props) {
@@ -22,7 +30,7 @@ export class App extends Component {
       dataValue: [{hashtag: ['cargando']}], // #s
       textToCopy: '', //String
       selectedId: [[]],
-      contadorPrueba: 0,
+      contador: 0,
     };
   }
 
@@ -40,12 +48,13 @@ export class App extends Component {
           arraytests.push(e.category);
           seletedIdArrays.push([]);
         });
-        arraytests.push('Add new category');
         arraytests.push('Cancel');
-        this.setState({dataValue: res.data.results});
-        this.setState({pickerValue: arraytests});
-        this.setState({selectedId: seletedIdArrays});
-        console.log(this.state.pickerValue);
+        this.setState({
+          dataValue: res.data.results,
+          pickerValue: arraytests,
+          selectedId: seletedIdArrays,
+        });
+        //console.log(this.state.pickerValue);
         //console.log(this.state.dataValue);
       })
       .catch(err => {
@@ -54,14 +63,14 @@ export class App extends Component {
   }
 
   deleteHashtags() {
-    justForDelet=[]
+    justForDelete = [];
     this.state.pickerValue.map(e => {
-      justForDelet.push([]);
-    })
+      justForDelete.push([]);
+    });
     this.setState({
       textToCopy: '',
-      selectedId: justForDelet, //Esto debe estar bien.
-      contadorPrueba: 0,
+      selectedId: justForDelete, //Esto debe estar bien.
+      contador: 0,
     });
   }
 
@@ -74,9 +83,6 @@ export class App extends Component {
       buttonIndex => {
         if (buttonIndex === this.state.pickerValue.length - 1) {
           alert('Acción cancelada');
-        } else if (buttonIndex === this.state.pickerValue.length - 2) {
-            alert("...");
-            //this.props.navigation.navigate('Hash')
         } else {
           this.setState({pickerId: buttonIndex});
           this.renderKeywordBoxes();
@@ -88,7 +94,7 @@ export class App extends Component {
 
   renderKeywordBoxes() {
     dataDePrueba = this.state.dataValue[this.state.pickerId].hashtag;
-    if (this.state.pickerId === null) {
+    if (this.state.pickerId === null ) {
       return <Text style={{color: 'white'}}> Please Select a category </Text>;
     } else {
       return dataDePrueba.map((e, i) => {
@@ -98,7 +104,9 @@ export class App extends Component {
             style={[
               styles.keywordBox,
               {
-                backgroundColor: this.state.selectedId[this.state.pickerId].includes(i)
+                backgroundColor: this.state.selectedId[
+                  this.state.pickerId
+                ].includes(i)
                   ? 'rgba(176, 224, 230, 0.6)'
                   : 'transparent',
               },
@@ -123,30 +131,35 @@ export class App extends Component {
   }
 
   _onPress = (item, index) => {
-    let prueba = this.state.textToCopy;
-    if (this.state.selectedId[this.state.pickerId].includes(index)) {      // ELIMINA
+    let text = this.state.textToCopy;
+    if (this.state.selectedId[this.state.pickerId].includes(index)) {
+      // ELIMINA
       console.log('Ya existe');
       console.log(index);
-      this.state.selectedId[this.state.pickerId] = this.state.selectedId[this.state.pickerId].filter(
-        item => item !== index);
-      prueba = this.state.textToCopy.replace(' ' + item, '');
+      this.state.selectedId[this.state.pickerId] = this.state.selectedId[
+        this.state.pickerId
+      ].filter(item => item !== index);
+      text = this.state.textToCopy.replace(' ' + item, '');
     } else {
       this.state.selectedId[this.state.pickerId].push(index); //Se agrega
-      prueba = this.state.textToCopy + ' ' + item;
+      text = this.state.textToCopy + ' ' + item;
     }
     //console.log(this.state.selectedId)
-    let forAccountant = 0;
+    //let forAccountant = 0;
     //const valorArreglo = this.state.pickerValue.length - 2;
-    /* for( let i=0; i <= 4; i++ ){
-        forAccountant += this.state.selectedId[i]   
+    /* for( let i=0; i <= valorArreglo; i++ ){
+        forAccountant += this.state.selectedId[i].length   
     } */
     /* this.state.pickerValue.map(e => {
         forAccountant += this.state.selectedId[this.state.pickerId].length
     }) */
 
-    this.setState({textToCopy: prueba});
+    this.setState({textToCopy: text});
     this.setState({
-      contadorPrueba: this.state.selectedId[0].length + this.state.selectedId[1].length + this.state.selectedId[2].length
+      contador:
+        this.state.selectedId[0].length +
+        this.state.selectedId[1].length +
+        this.state.selectedId[2].length,
     });
   };
 
@@ -155,19 +168,32 @@ export class App extends Component {
       alert(' No items to copy ');
     } else {
       Clipboard.setString(this.state.textToCopy);
-      alert(` Awesome \n yo have ${this.state.contadorPrueba} hashtags copied`);
+      alert(` Awesome \n yo have ${this.state.contador} hashtags copied`);
     }
   }
 
   colorBadge() {
-    if (this.state.contadorPrueba <= 24) {
+    if (this.state.contador <= 24) {
       return 'success';
-    } else if (this.state.contadorPrueba <= 30 && this.state.contadorPrueba > 24) {
+    } else if (
+      this.state.contador <= 30 &&
+      this.state.contador > 24
+    ) {
       return 'warning';
     } else {
       return 'error';
     }
   }
+
+  navigateToCategory = () => {
+    const {navigate} = this.props.navigation;
+    navigate({
+      key: 'Add',
+      routeName: 'Add',
+      params: {item: this.state.pickerSelection,
+               item2: dataDePrueba},
+    });
+  };
 
   render() {
     return (
@@ -188,19 +214,29 @@ export class App extends Component {
               onPress={() => this.actionSheet()}
             />
           }
-          centerComponent={{
-            text: this.state.pickerSelection,
-            style: {color: '#ffff'},
-          }}
+          centerComponent={
+            <Text
+              onPress={() => this.actionSheet()}
+              style={{color: 'white', fontFamily: 'Bebas Neue', fontSize: 20}}>
+              {' '}
+              {this.state.pickerSelection}
+            </Text>
+          }
           rightComponent={
             <Tooltip
+              height={100}
+              width={300}
               popover={
-                <Text>Instagram only supports 34 hashtags, be careful</Text>
+                <Text
+                  style={{justifyContent: 'center', alignContent: 'center'}}>
+                  Instagram only supports 34 hashtags, be careful
+                </Text>
               }>
               <Badge
-                badgeStyle={{margin: 10}}
-                value={this.state.contadorPrueba}
-                status={this.colorBadge()}/>
+                badgeStyle={{margin: 15, height: 30, width: 30}}
+                value={this.state.contador}
+                status={this.colorBadge()}
+              />
             </Tooltip>
           }
         />
@@ -212,20 +248,26 @@ export class App extends Component {
             {this.renderKeywordBoxes()}
           </ScrollView>
         </View>
-        <View style={{flex: 1 /* backgroundColor: 'blue' */}}>
-          <Text style={styles.keywordText}>{this.state.textToCopy}</Text>
+        <View style={{flex: 1, /* backgroundColor: 'blue' */}}>
+          <ScrollView>
+            <Text style={styles.keywordText}>{this.state.textToCopy}</Text>
+          </ScrollView>
         </View>
-        <View style={{flex: 1}}>
-          <Button
-            title={'Add your own hashtags'}
-            buttonStyle={{backgroundColor: 'orange', borderRadius: 10}}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: 10,
-            }}
-            onPress={() => this.props.navigation.navigate('Add')}
-          />
+        <View style={{flex: 1, /* backgroundColor: 'red' */}}>
+          <View style={{justifyContent: "space-around", flexDirection: "row", /* backgroundColor: "white" */}}>
+            <Button
+              title={'Add hashtags'}
+              buttonStyle={styles.styleButton}
+              style={styles.buttonStyleAround}
+              onPress={() => this.navigateToCategory()}
+            />
+            <Button
+              title={'Edit category'}
+              buttonStyle={styles.styleButton}
+              style={styles.buttonStyleAround}
+              onPress={() => this.navigateToCategory()}
+            />
+          </View>
           <Button
             icon={{
               name: 'copy',
@@ -233,12 +275,8 @@ export class App extends Component {
               color: 'white',
             }}
             title={'Copy your Hashtags'}
-            buttonStyle={{backgroundColor: 'orange', borderRadius: 10}}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: 10,
-            }}
+            buttonStyle={styles.styleButton}
+            style={styles.buttonStyleAround}
             onPress={() => this.funCopy()}
           />
           <Button
@@ -247,12 +285,9 @@ export class App extends Component {
               type: 'material',
               color: 'white',
             }}
-            buttonStyle={{backgroundColor: 'orange', borderRadius: 10}}
+            buttonStyle={styles.styleButton}
             title={'Clear'}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+            style={styles.buttonStyleAround}
             onPress={() => this.deleteHashtags()}
           />
         </View>
@@ -289,6 +324,15 @@ const styles = StyleSheet.create({
   footerWrapperNC: {
     flexDirection: 'column',
   },
+  styleButton: {
+    backgroundColor: 'orange', 
+    borderRadius: 10,
+  },
+  buttonStyleAround: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  }
 });
 
 export default App;

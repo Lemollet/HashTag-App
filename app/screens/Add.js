@@ -1,11 +1,28 @@
 import React, {Component} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { Header, Icon, Input, Button  } from 'react-native-elements';
-import { StyleSheet, Text, View, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TextInput} from 'react-native';
 
 export default class App extends Component {
   constructor() {
     super();
+    this.state={
+      comment: ""
+    }
+  }
+  componentDidMount(){
+    console.log(this.props.navigation.state.params)
+  }
+
+  formatHashtags(){
+    const toSupply = /\s/;
+    let textToAdd = this.state.comment.split(toSupply);
+    textToAdd.sort();
+    console.log(textToAdd)
+    Array.prototype.push.apply(this.props.navigation.state.params.item2, textToAdd);
+    console.log(this.props.navigation.state.params.item2)
+    this.props.navigation.state.params.item2.sort()
+
   }
 
   render() {
@@ -23,10 +40,14 @@ export default class App extends Component {
                     color="white"
                     onPress={() => this.props.navigation.navigate('Hash')}
                   />}
-                centerComponent={{ text: 'Add your hashtags', style: { color: '#fff' } }}
+                centerComponent={<Text 
+                  style={{color: 'white', fontFamily: 'Bebas Neue', fontSize: 20}}
+                  > {this.props.navigation.state.params.item} </Text>}
             />
-            <View>
-                <Input placeholder='Recomended: #hola, #mundo'/>
+            <View style={{ height: 100,}}>
+                <Input 
+                  placeholder='Recomended: #hola,#mundo'
+                  onChangeText={(comment) => this.setState({comment})}/>
             </View>
             <Button 
                 title={'Add'}
@@ -35,7 +56,9 @@ export default class App extends Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 20,}}
+                onPress={() => this.formatHashtags()}
             />
+            <Text> {this.state.comment} </Text>
         </LinearGradient>
     );
   }
@@ -45,36 +68,4 @@ const styles = StyleSheet.create({
     linearGradient: {
       flex: 1,
     },
-    keywordText: {
-      fontFamily: 'Bebas Neue',
-      fontSize: 18,
-      padding: 6,
-      fontWeight: 'bold',
-      color: 'white',
-      letterSpacing: 1.5,
-      textAlign: 'center',
-    },
-    keywordBox: {
-      backgroundColor: 'transparent',
-      margin: 3,
-      borderColor: 'rgba(176,224,230, 0.6)',
-      borderWidth: 1,
-    },
-    footerWrapper: {
-      flexWrap: 'wrap',
-      alignItems: 'flex-start',
-      flexDirection: 'row',
-      paddingTop: 10,
-    },
-    footerWrapperNC: {
-      flexDirection: 'column',
-    },
   });
-
-
-    {/* <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Button
-          title="Go to Hash"
-          onPress={() => this.props.navigation.navigate('Hash')}
-        />
-      </View> */}
