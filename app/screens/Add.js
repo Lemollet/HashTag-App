@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
 import { Header, Icon, Input, Button  } from 'react-native-elements';
-import { StyleSheet, Text, View, StackActions} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 export default class App extends Component {
   constructor() {
@@ -15,23 +16,11 @@ export default class App extends Component {
     console.log(this.props.navigation.state.params)
   }
 
-
-  makeAPromise() {
-    return new Promise((resolve, reject)=> {
-      resolve(this.formatHashtags())
-    })
-    .then(res => {
-      //console.log(this.props.navigation.state.params.item2);
-      alert('your hashtags have been successfully added')
-    })
-    .catch(err => alert('There was an error, try later'))
-  }
-
-
   formatHashtags(){
     const toSupply = /\s/;
     let textToAdd = this.state.comment;
-    let textWithFormat = textToAdd.replace(/, |,|. /g, ' ');
+    textToAdd = textToAdd.toLowerCase();
+    let textWithFormat = textToAdd.replace(/, |,/g, ' ');
     //console.log(textWithFormat)
     let newArray = textWithFormat.split(toSupply); 
     //console.log(newArray)
@@ -54,13 +43,8 @@ export default class App extends Component {
     console.log(this.props.navigation.state.params.item2)
     this.props.navigation.state.params.item2.sort()
     console.log(this.props.navigation.state.params.item2)
-    //this.actulizarEnServer(this.props.navigation.state.params.item2);
-
-    /* const resetAction = StackActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({routeName: 'Hash'})],
-    });
-    this.props.navigation.dispatch(resetAction); */
+    this.actulizarEnServer(this.props.navigation.state.params.item2);
+    alert(`You added ${newArray.length} hashtags`);
   }
 
   actulizarEnServer(arreglo) {
@@ -77,8 +61,15 @@ export default class App extends Component {
       )
       .then(res => {
         console.log(res.data);
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({routeName: 'Hash'})],
+        });
+        this.props.navigation.dispatch(resetAction);
+        //alert('you added hashtags'+ newArray.length)
       })
       .catch(err => {
+        alert('There was an error, try later');
         console.log(err);
         console.log(err.response.data.error);
       });
@@ -115,7 +106,7 @@ export default class App extends Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 20,}}
-                onPress={() => this.makeAPromise()}
+                onPress={() => this.formatHashtags()}
             />
             <Text> {this.state.comment} </Text>
         </LinearGradient>
