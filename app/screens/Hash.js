@@ -41,19 +41,19 @@ export class App extends Component {
       .get('http://68.183.153.133:1919/parse/classes/IgSocial/', {headers})
       .then(res => {
         //console.log(res.data.results);
-        let arraytests = [];
+        let pickerArray = [];
         let seletedIdArrays = [];
         res.data.results.map(e => {
-          arraytests.push(e.category);
+          pickerArray.push(e.category);
           seletedIdArrays.push([]);
         });
-        arraytests.push('Agregar categoría');
-        arraytests.push('Cancel');
+        pickerArray.push('Add new category  ');
+        pickerArray.push('Cancel');
         this.setState({
           dataValue: res.data.results,
-          pickerValue: arraytests,
+          pickerValue: pickerArray,
           selectedId: seletedIdArrays,
-          pickerSelection: arraytests[0],
+          pickerSelection: pickerArray[0],
         });
         //console.log(this.state.pickerValue);
         //console.log(this.state.dataValue);
@@ -96,11 +96,11 @@ export class App extends Component {
   }
 
   renderKeywordBoxes() {
-    dataDePrueba = this.state.dataValue[this.state.pickerId].hashtag;
+    specificDataValue = this.state.dataValue[this.state.pickerId].hashtag;
     if (this.state.pickerId === null ) {
       return <Text style={{color: 'white'}}> Please Select a category </Text>;
     } else {
-      return dataDePrueba.map((e, i) => {
+      return specificDataValue.map((e, i) => {
         return (
           <TouchableHighlight
             onPress={() => this._onPress(e, i)}
@@ -184,7 +184,7 @@ export class App extends Component {
       key: 'Add',
       routeName: 'Add',
       params: {item: this.state.pickerSelection,
-               item2: dataDePrueba,
+               item2: specificDataValue,
                item3: this.state.dataValue[this.state.pickerId].objectId},
     });
   };
