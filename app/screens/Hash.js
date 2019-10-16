@@ -25,12 +25,11 @@ export class App extends Component {
     this.state = {
       pickerSelection: 'Select Category', //LABEL
       pickerId: 0,
-      pickerDisplayed: false, //IF PARA MOSTRAR PICKER
-      pickerValue: [], // Categories
-      dataValue: [{hashtag: ['cargando']}], // #s
+      pickerValue: [], //Categories
+      dataValue: [{hashtag: ['cargando']}], //#s
       textToCopy: '', //String
       selectedId: [[]],
-      contador: 0,
+      accountant: 0,
     };
   }
 
@@ -48,11 +47,13 @@ export class App extends Component {
           arraytests.push(e.category);
           seletedIdArrays.push([]);
         });
+        arraytests.push('Agregar categoría');
         arraytests.push('Cancel');
         this.setState({
           dataValue: res.data.results,
           pickerValue: arraytests,
           selectedId: seletedIdArrays,
+          pickerSelection: arraytests[0],
         });
         //console.log(this.state.pickerValue);
         //console.log(this.state.dataValue);
@@ -69,8 +70,8 @@ export class App extends Component {
     });
     this.setState({
       textToCopy: '',
-      selectedId: justForDelete, //Esto debe estar bien.
-      contador: 0,
+      selectedId: justForDelete, 
+      accountant: 0,
     });
   }
 
@@ -83,6 +84,8 @@ export class App extends Component {
       buttonIndex => {
         if (buttonIndex === this.state.pickerValue.length - 1) {
           alert('Acción cancelada');
+        } else if (buttonIndex === this.state.pickerValue.length - 2) {
+          alert('Usuario creara nueva categoría');
         } else {
           this.setState({pickerId: buttonIndex});
           this.renderKeywordBoxes();
@@ -144,23 +147,13 @@ export class App extends Component {
       this.state.selectedId[this.state.pickerId].push(index); //Se agrega
       text = this.state.textToCopy + ' ' + item;
     }
-    //console.log(this.state.selectedId)
-    //let forAccountant = 0;
-    //const valorArreglo = this.state.pickerValue.length - 2;
-    /* for( let i=0; i <= valorArreglo; i++ ){
-        forAccountant += this.state.selectedId[i].length   
-    } */
-    /* this.state.pickerValue.map(e => {
-        forAccountant += this.state.selectedId[this.state.pickerId].length
-    }) */
-
     this.setState({textToCopy: text});
-    this.setState({
-      contador:
-        this.state.selectedId[0].length +
-        this.state.selectedId[1].length +
-        this.state.selectedId[2].length,
-    });
+    let forAccountant = 0;
+    const valorArreglo = this.state.pickerValue.length - 2;
+    for( let i=0; i < valorArreglo; i++ ){
+        forAccountant += this.state.selectedId[i].length;   
+    }
+    this.setState({ accountant: forAccountant });
   };
 
   funCopy() {
@@ -168,12 +161,12 @@ export class App extends Component {
       alert(' No items to copy ');
     } else {
       Clipboard.setString(this.state.textToCopy);
-      alert(` Awesome \n yo have ${this.state.contador} hashtags copied`);
+      alert(` Awesome \n yo have ${this.state.accountant} hashtags copied`);
     }
   }
 
   colorBadge() {
-    if (this.state.contador <= 24) {
+    if (this.state.accountant <= 24) {
       return 'success';
     } else if (
       this.state.contador <= 30 &&
@@ -191,7 +184,8 @@ export class App extends Component {
       key: 'Add',
       routeName: 'Add',
       params: {item: this.state.pickerSelection,
-               item2: dataDePrueba},
+               item2: dataDePrueba,
+               item3: this.state.dataValue[this.state.pickerId].objectId},
     });
   };
 
@@ -234,7 +228,7 @@ export class App extends Component {
               }>
               <Badge
                 badgeStyle={{margin: 15, height: 30, width: 30}}
-                value={this.state.contador}
+                value={this.state.accountant}
                 status={this.colorBadge()}
               />
             </Tooltip>
