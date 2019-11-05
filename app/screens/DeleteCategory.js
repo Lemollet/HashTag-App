@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
-import { Header, Icon, Input, Button, CheckBox  } from 'react-native-elements';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import { NavigationActions, StackActions } from 'react-navigation';
+import {Header, Icon, Input, Button, CheckBox} from 'react-native-elements';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {NavigationActions, StackActions} from 'react-navigation';
 
 export default class App extends Component {
   constructor() {
@@ -11,48 +11,65 @@ export default class App extends Component {
     this.state = {
       comment: '',
       arrayDelete: [],
+      checked: [],
     };
   }
   componentDidMount() {
     console.log(this.props.navigation.state.params);
   }
 
-  renderKeywordBoxes(){
+  renderKeywordBoxes() {
     const originalArray = this.props.navigation.state.params.item2;
-    console.log(originalArray)
-    return originalArray.map((e, i) =>{
-      return(<CheckBox title={e} checked={this.state.checked} key={i} 
-        onPress={() => this._onPress(e,i)}/>)
-    })
+    console.log(originalArray);
+    return originalArray.map((e, i) => {
+      return (
+        <CheckBox
+          title={e}
+          checked={this.state.checked[i]}
+          key={i}
+          onPress={() => this._onPress(e, i)}
+        />
+      );
+    });
   }
 
   _onPress = (item, index) => {
-    this.setState({checked: !this.state.checked});
+    //this.setState({checked: !this.state.checked});
+    console.log(this.state.checked);
+    this.state.checked[index] = !this.state.checked[index];
+    this.setState({checked: this.state.checked});
     this.state.arrayDelete.push(item);
-    console.log(this.state.arrayDelete)
-  }
+    console.log(this.state.arrayDelete);
+  };
 
-  deleteHastags(){
-    console.log(this.state.arrayDelete)
-    for (let i = 0; i < this.state.arrayDelete.length; i++){
-      if (this.props.navigation.state.params.item2.includes(this.state.arrayDelete[i])){
-        this.props.navigation.state.params.item2 = this.arrayRemove(this.props.navigation.state.params.item2, this.state.arrayDelete[i])
-        console.log(this.state.arrayDelete[i])
+  deleteHastags() {
+    console.log(this.state.arrayDelete);
+    for (let i = 0; i < this.state.arrayDelete.length; i++) {
+      if (
+        this.props.navigation.state.params.item2.includes(
+          this.state.arrayDelete[i],
+        )
+      ) {
+        this.props.navigation.state.params.item2 = this.arrayRemove(
+          this.props.navigation.state.params.item2,
+          this.state.arrayDelete[i],
+        );
+        console.log(this.state.arrayDelete[i]);
       } else {
-        console.log("todo bien")
+        console.log('todo bien');
       }
     }
     alert(`Your category has been updated 😃`);
-    console.log(this.props.navigation.state.params.item2)
+    console.log(this.props.navigation.state.params.item2);
   }
 
   arrayRemove = (arr, value) => {
     return arr.filter(ele => {
       return ele != value;
-    })
-  }
+    });
+  };
 
-   /* actulizarEnServer(arreglo) {
+  /* actulizarEnServer(arreglo) {
     const headers = {
       'X-Parse-Application-Id': 'aVcbcdaMSITLDSmqDLKCrRr3sFRefjUpPW8p8qmJ',
     };
