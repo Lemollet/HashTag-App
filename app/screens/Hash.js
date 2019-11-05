@@ -189,6 +189,17 @@ export class App extends Component {
     });
   };
 
+  navigateToDelete = () => {
+    const {navigate} = this.props.navigation;
+    navigate({
+      key: 'DeleteCategory',
+      routeName: 'DeleteCategory',
+      params: {item: this.state.pickerSelection,
+               item2: specificDataValue,
+               item3: this.state.dataValue[this.state.pickerId].objectId},
+    });
+  };
+
   render() {
     return (
       <LinearGradient
@@ -256,10 +267,10 @@ export class App extends Component {
               onPress={() => this.navigateToCategory()}
             />
             <Button
-              title={'Edit category'}
+              title={'Delete from category'}
               buttonStyle={styles.styleButton}
               style={styles.buttonStyleAround}
-              onPress={() => this.navigateToCategory()}
+              onPress={() => this.navigateToDelete()}
             />
           </View>
           <Button
