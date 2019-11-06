@@ -10,7 +10,7 @@ export default class App extends Component {
     super();
     this.state = {
       comment: '',
-      checked: [],
+      arrayDelete: [],
     };
   }
   componentDidMount() {
@@ -18,13 +18,13 @@ export default class App extends Component {
   }
 
   renderKeywordBoxes() {
-    let originalArray = this.props.navigation.state.params.item2;
+    const originalArray = this.props.navigation.state.params.item2;
     console.log(originalArray);
     return originalArray.map((e, i) => {
       return (
         <CheckBox
           title={e}
-          checked={this.state.checked[i]}
+          checked={this.state.checked}
           key={i}
           onPress={() => this._onPress(e, i)}
         />
@@ -33,10 +33,31 @@ export default class App extends Component {
   }
 
   _onPress = (item, index) => {
-    this.state.checked[index] = !this.state.checked[index];
-    this.setState({checked: this.state.checked});
-    console.log(this.state.checked);
+    this.setState({checked: !this.state.checked});
+    this.state.arrayDelete.push(item);
+    console.log(this.state.arrayDelete);
   };
+
+  deleteHastags() {
+    console.log(this.state.arrayDelete);
+    for (let i = 0; i < this.state.arrayDelete.length; i++) {
+      if (
+        this.props.navigation.state.params.item2.includes(
+          this.state.arrayDelete[i],
+        )
+      ) {
+        this.props.navigation.state.params.item2 = this.arrayRemove(
+          this.props.navigation.state.params.item2,
+          this.state.arrayDelete[i],
+        );
+        console.log(this.state.arrayDelete[i]);
+      } else {
+        console.log('todo bien');
+      }
+    }
+    alert(`Your category has been updated 😃`);
+    console.log(this.props.navigation.state.params.item2);
+  }
 
   arrayRemove = (arr, value) => {
     return arr.filter(ele => {
@@ -44,22 +65,7 @@ export default class App extends Component {
     });
   };
 
-  deleteHastags() {
-    let e = 0;
-    for (let i = 0; i < this.state.checked.length; i++) {
-      if ( this.state.checked[i] === true ) {
-        this.props.navigation.state.params.item2.splice(e,1);
-      } else {
-        e += 1;
-        console.log('todo bien');
-      }
-    }
-    alert(`Your category has been updated 😃`);
-    this.actulizarEnServer(this.props.navigation.state.params.item2);
-    console.log(this.props.navigation.state.params.item2);
-  }
-
-  actulizarEnServer(arreglo) {
+  /* actulizarEnServer(arreglo) {
     const headers = {
       'X-Parse-Application-Id': 'aVcbcdaMSITLDSmqDLKCrRr3sFRefjUpPW8p8qmJ',
     };
@@ -78,13 +84,14 @@ export default class App extends Component {
           actions: [NavigationActions.navigate({routeName: 'Hash'})],
         });
         this.props.navigation.dispatch(resetAction);
+        //alert('you added hashtags'+ newArray.length)
       })
       .catch(err => {
         alert('There was an error, try later');
         console.log(err);
         console.log(err.response.data.error);
       });
-  } 
+  } */
 
   render() {
     return (
@@ -145,7 +152,7 @@ const styles = StyleSheet.create({
   footerWrapper: {
     //flexWrap: 'wrap',
     alignItems: 'flex-start',
-    //flexDirection: 'row,
+    //flexDirection: 'row',
     paddingTop: 10,
   },
   footerWrapperNC: {

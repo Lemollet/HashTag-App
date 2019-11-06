@@ -66,7 +66,6 @@ export default class App extends Component {
           actions: [NavigationActions.navigate({routeName: 'Hash'})],
         });
         this.props.navigation.dispatch(resetAction);
-        //alert('you added hashtags'+ newArray.length)
       })
       .catch(err => {
         alert('There was an error, try later');
