@@ -38,12 +38,6 @@ export default class App extends Component {
     console.log(this.state.checked);
   };
 
-  arrayRemove = (arr, value) => {
-    return arr.filter(ele => {
-      return ele != value;
-    });
-  };
-
   deleteHastags() {
     let e = 0;
     for (let i = 0; i < this.state.checked.length; i++) {
