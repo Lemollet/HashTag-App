@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Header, Icon, Input, Button, CheckBox} from 'react-native-elements';
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {NavigationActions, StackActions} from 'react-navigation';
+import {apiHeader, parseURL} from '../credentials/variables';
 
 export default class App extends Component {
   constructor() {
@@ -55,11 +56,11 @@ export default class App extends Component {
 
   actulizarEnServer(arreglo) {
     const headers = {
-      'X-Parse-Application-Id': 'aVcbcdaMSITLDSmqDLKCrRr3sFRefjUpPW8p8qmJ',
+      'X-Parse-Application-Id': apiHeader,
     };
     axios
       .put(
-        'http://68.183.153.133:1919/parse/classes/IgSocial/' + this.props.navigation.state.params.item3,
+        parseURL + this.props.navigation.state.params.item3,
         {
           hashtag: arreglo,
         },

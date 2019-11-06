@@ -17,6 +17,7 @@ import {
   Clipboard,
   ActionSheetIOS,
 } from 'react-native';
+import {apiHeader, parseURL} from '../credentials/variables';
 
 
 export class App extends Component {
@@ -35,10 +36,10 @@ export class App extends Component {
 
   componentDidMount() {
     const headers = {
-      'X-Parse-Application-Id': 'aVcbcdaMSITLDSmqDLKCrRr3sFRefjUpPW8p8qmJ',
+      'X-Parse-Application-Id': apiHeader,
     };
     axios
-      .get('http://68.183.153.133:1919/parse/classes/IgSocial/', {headers})
+      .get(parseURL, {headers})
       .then(res => {
         //console.log(res.data.results);
         let pickerArray = [];

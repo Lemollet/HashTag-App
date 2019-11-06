@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Header, Icon, Input, Button  } from 'react-native-elements';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
+import {apiHeader, parseURL} from '../credentials/variables';
 
 export default class App extends Component {
   constructor() {
@@ -21,9 +22,7 @@ export default class App extends Component {
     let textToAdd = this.state.comment;
     textToAdd = textToAdd.toLowerCase();
     let textWithFormat = textToAdd.replace(/, |,/g, ' ');
-    //console.log(textWithFormat)
     let newArray = textWithFormat.split(toSupply); 
-    //console.log(newArray)
     for (let i = 0; i < newArray.length; i++) {
       if( newArray[i].charAt(0) === '#'){
         console.log('si es un hastag')
@@ -32,28 +31,38 @@ export default class App extends Component {
       } 
     }
     console.log(newArray)
+    let cant = 0;
     for (let i = 0; i < newArray.length; i++){
       if (this.props.navigation.state.params.item2.includes(newArray[i])){
         console.log("ya existe el elemento " + newArray[i])
       } else {
-        console.log("agregue " + newArray[i])
-        this.props.navigation.state.params.item2.push(newArray[i])
+        if(newArray[i] === "#"){
+          console.log("El hasgtag esta vacio")
+        } else {
+          console.log("agregue " + newArray[i])
+          this.props.navigation.state.params.item2.push(newArray[i])
+          cant += 1;
+        }
       }
     }
     console.log(this.props.navigation.state.params.item2)
     this.props.navigation.state.params.item2.sort()
     console.log(this.props.navigation.state.params.item2)
-    this.actulizarEnServer(this.props.navigation.state.params.item2);
-    alert(`You added ${newArray.length} hashtags`);
+    if (this.state.comment === "" || this.state.comment === " "){
+      alert("You haven't added any hashtag yet")
+    } else {
+      this.actulizarEnServer(this.props.navigation.state.params.item2);
+      alert(`You added ${cant} hashtags`);
+    }
   }
 
   actulizarEnServer(arreglo) {
     const headers = {
-      'X-Parse-Application-Id': 'aVcbcdaMSITLDSmqDLKCrRr3sFRefjUpPW8p8qmJ',
+      'X-Parse-Application-Id': apiHeader,
     };
     axios
       .put(
-        'http://68.183.153.133:1919/parse/classes/IgSocial/' + this.props.navigation.state.params.item3,
+        parseURL + this.props.navigation.state.params.item3,
         {
           hashtag: arreglo,
         },
