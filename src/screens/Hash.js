@@ -19,7 +19,6 @@ import {
 } from 'react-native';
 import {apiHeader, parseURL} from '../credentials/variables';
 
-
 export class App extends Component {
   constructor(props) {
     super(props);
@@ -203,9 +202,7 @@ export class App extends Component {
 
   render() {
     return (
-      <LinearGradient
-        colors={['#181a33', '#131529']}
-        style={styles.linearGradient}>
+      <LinearGradient  colors={['#181a33', '#131529']} style={styles.linearGradient}>
         <Header
           placement="left"
           ViewComponent={LinearGradient}
